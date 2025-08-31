@@ -1,0 +1,29 @@
+---
+title: "Testing for Lab 1"
+author: "Mason Sharum"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: yes
+    toc_float: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Tasks
+
+These are the tasks for the first lab
+
+
+
+$$RSS = \sum_{i=1}^{n}r_i^2$$
+## Task 1
+
+```{r}
+ddt <- read.csv("DDT.csv")
+head(ddt)
+```
+
+
