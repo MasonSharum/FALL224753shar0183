@@ -14,16 +14,181 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Tasks
 
-These are the tasks for the first lab
-
-
-
-$$RSS = \sum_{i=1}^{n}r_i^2$$
 ## Task 1
 
 ```{r}
-ddt <- read.csv("DDT.csv")
+getwd()
+```
+
+## Task 2
+
+```{r}
+ddt = read.csv("DDT.csv")
 head(ddt)
 ```
 
+## Task 3
 
+```{r}
+summary(ddt)
+```
+### Question 1
+
+The qualitative variables in "ddt" are River and Species.
+
+### Question 2
+
+The quantitative variables in "ddt" are Mile, Length, Weight, and DDT.
+
+### Question 3
+
+```{r}
+table(ddt$SPECIES)
+```
+
+There are 3 SPECIES in the ddt data set.
+
+### Question 4
+
+```{r}
+with(ddt, ddt[WEIGHT>800 & SPECIES=="LMBASS",])
+```
+
+### Question 5
+
+```{r}
+with(ddt, ddt[RIVER=="SCM" & DDT>4.0,])
+```
+
+## Task 4
+
+### Question 1
+
+```{r}
+mean(ddt$LENGTH)
+```
+The mean length of fish is 42.8125.
+
+### Question 2
+
+```{r}
+sd(ddt$WEIGHT)
+```
+The standard deviation of the weight of fish is 376.5461.
+
+### Question 3
+
+```{r}
+with(ddt, plot(LENGTH ~ WEIGHT))
+```
+
+Answer: No, the given plot is not the same as the length vs. weight from the ddt data frame.
+
+### Question 4
+
+```{r}
+v = 1:20
+table(v/20)
+```
+The last value of v/20 is 1.
+
+## Task 5
+
+### Question 1
+
+```{r}
+rivers = with(ddt, table(RIVER))
+rivers
+```
+
+### Question 2
+
+```{r}
+barplot(rivers, col=1:4)
+```
+
+### Question 3
+
+```{r}
+SPxRIV = with(ddt, table(RIVER, SPECIES))
+SPxRIV
+```
+
+### Question 4
+
+```{r}
+barplot(SPxRIV)
+```
+
+## Task 6
+
+### Question 1
+
+```{r}
+species = with(ddt, table(SPECIES))
+pie(species)
+```
+
+### Question 2
+
+```{r}
+pie(rivers)
+```
+
+## Task 7
+
+### Question 1
+
+```{r}
+vddt = with(ddt, table(DDT))
+boxplot(vddt, ylab = "DDT")
+```
+
+### Question 2
+
+```{r}
+weight = with(ddt, table(WEIGHT))
+boxplot(weight, ylab = "Weight")
+```
+
+### Question 3
+
+```{r}
+length = with(ddt, table(LENGTH))
+boxplot(length, ylab = "Length")
+```
+
+## Task 8
+
+### Question 1
+
+```{r}
+with(ddt, coplot(LENGTH ~ WEIGHT | RIVER))
+```
+
+### Question 2
+
+```{r}
+with(ddt, coplot(DDT ~ WEIGHT | SPECIES))
+```
+
+## Task 9
+
+### Question 1
+
+```{r}
+library(ggplot2)
+ggplot(ddt, aes(x = SPECIES, y = WEIGHT, fill = RIVER)) + geom_boxplot() + ggtitle("Mason Sharum")
+```
+
+### Question 2
+
+```{r}
+ggplot(ddt, aes(x = RIVER, y = LENGTH, fill = SPECIES)) + geom_violin() + ggtitle("Mason Sharum")
+```
+
+### Question 3
+
+```{r}
+ggplot(ddt, aes(x = WEIGHT, y = LENGTH, color = SPECIES)) + geom_point() + ggtitle("Mason Sharum")
+```
