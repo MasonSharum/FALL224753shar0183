@@ -28,3 +28,75 @@ head(epa)
 ```
 
 ## Task 3
+
+### Question 1
+
+```{r}
+mpg = epa$MPG
+z=(mpg - mean(mpg))/sd(mpg)
+round(mean(z), 9)
+sd(z) * sd(z)
+```
+
+### Question 2
+
+```{r}
+epa[abs(z) >= 2 & abs(z) <= 3,]
+```
+
+### Question 3
+
+```{r}
+epa[abs(z) > 3,]
+```
+
+### Question 4
+
+```{r}
+library(lattice)
+mycol = ifelse(abs(z) > 3, "Red",
+          ifelse(abs(z) >= 2 & abs(z) <= 3, "Blue", "Black"))
+dotplot(mpg, col = mycol)
+```
+
+## Task 4
+
+### Question 1
+
+```{r}
+boxplot(mpg, main = "MPG Variable Boxplot", notch = TRUE, horizontal = TRUE, xlab = "Miles Per Gallon", col = "Black")
+```
+
+### Question 2
+
+Using Chebyshev's theorem there should be at least 3/4 of the data within 2 standard deviations of the mean.
+
+### Question 3
+
+```{r}
+length(mpg[abs(z)<2])/length(mpg)
+```
+
+### Question 4
+
+Chebyshev does agree with the data since 96/100 is more than 3/4.
+
+### Question 5
+
+The empirical rule requires there to be at least  95% of the data within 2 standard deviations of the mean.
+
+### Question 6
+
+```{r}
+length(mpg[abs(z)<2])/length(mpg)
+```
+
+It corresponds well since there is 96% of the data within 2 standard deviations.
+
+### Question 7
+
+```{r}
+hist(mpg)
+```
+
+Yes, the Empirical rule is valid since mpg is unimodal and symmetric about the mode.

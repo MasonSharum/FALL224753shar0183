@@ -6,10 +6,7 @@ output:
   html_document:
     toc: yes
     toc_float: yes
-    theme: spacelab
-    highlight: pygments
 ---
-# Install s20x
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
@@ -29,29 +26,159 @@ spruce.df = read.csv("SPRUCE.csv")
 head(spruce.df)
 ```
 
+# Task 3
 
-
-# Me
+## Question 1
 
 ```{r}
-obj = lm(Height~BHDiameter, data = spruce.df)
-summary(obj)
-plot(Height~BHDiameter, data = spruce.df)
-abline(obj)
+plot(Height~BHDiameter,bg="Blue",pch=21,
+     ylim=c(0,1.1*max(spruce.df$Height)),xlim=c(0,1.1*max(spruce.df$BHDiameter)),
+     data=spruce.df, main = "Height vs Breast Height Diameter")
+```
+
+## Question 2
+
+There does not appear to be a straight line relationship, it tapers off to more a horizontal line at the higher end of height.
+
+## Question 3
+
+```{r}
 library(s20x)
-trendscatter(Height~BHDiameter,f=0.7, data=spruce.df)
+layout(matrix(1:3,nr=1,nc=3,byrow=TRUE))
+trendscatter(Height~BHDiameter,f=0.5, data=spruce.df, main = "Height vs. BHDiameter 0.5")
+trendscatter(Height~BHDiameter,f=0.6, data=spruce.df, main = "Height vs. BHDiameter 0.6")
+trendscatter(Height~BHDiameter,f=0.7, data=spruce.df, main = "Height vs. BHDiameter 0.7")
+layout(matrix(1:3,nr=3,nc=1,byrow=TRUE))
 ```
 
-
-
-#Task 7
-This is how you place images in RMD documents
-
-<center>
-!["name of image"](gheat.png){ width=70% }
-</center>
+## Question 4
 
 ```{r}
-knitr::include_graphics(path = "gheat.png")
+spruce.lm = with(spruce.df, lm(Height~BHDiameter))
 ```
 
+## Question 5
+
+```{r}
+plot(Height~BHDiameter,bg="Blue",pch=21,
+     ylim=c(0,1.1*max(spruce.df$Height)),xlim=c(0,1.1*max(spruce.df$BHDiameter)),
+     data=spruce.df, main = "Height vs Breast Height Diameter")
+abline(spruce.lm)
+```
+
+## Question 6
+The straight line does not appear to be appropriate, the smoother curve appears to better follow the trend in the graph.
+
+# Task 4
+
+## Question 1
+
+```{r}
+layout(matrix(1:4,nr=2,nc=2,byrow=TRUE))
+layout.show(4)
+plot(Height~BHDiameter,bg="Blue",pch=21,cex=1.0,
+     ylim=c(0,1.1*max(spruce.df$Height)),xlim=c(0,1.1*max(spruce.df$BHDiameter)),
+     data=spruce.df, main = "Height vs Breast Height Diameter")
+abline(spruce.lm)
+
+yhat=fitted(spruce.lm)
+plot(Height~BHDiameter,bg="Blue",pch=21,cex=1.0,
+     ylim=c(0,1.1*max(spruce.df$Height)),xlim=c(0,1.1*max(spruce.df$BHDiameter)),
+     data=spruce.df, main = "RSS")
+abline(spruce.lm)
+with(spruce.df,{
+segments(BHDiameter,Height,BHDiameter,yhat)
+})
+
+plot(Height~BHDiameter,bg="Blue",pch=21,cex=1.0,
+     ylim=c(0,1.1*max(spruce.df$Height)),xlim=c(0,1.1*max(spruce.df$BHDiameter)),
+     data=spruce.df, main = "MSS")
+abline(h=mean(spruce.df$Height))
+with(spruce.df, segments(BHDiameter, mean(Height), BHDiameter, yhat, col = "Green"))
+abline(spruce.lm)
+
+plot(Height~BHDiameter,bg="Blue",pch=21,cex=1.0,
+     ylim=c(0,1.1*max(spruce.df$Height)),xlim=c(0,1.1*max(spruce.df$BHDiameter)),
+     data=spruce.df, main = "TSS")
+with(spruce.df, abline(h=mean(Height)))
+with(spruce.df, segments(BHDiameter, Height, BHDiameter, mean(Height), col = "Red"))
+```
+
+## Question 2
+
+```{r}
+RSS = with(spruce.df, sum((Height - yhat)^2))
+RSS
+```
+
+```{r}
+MSS = with(spruce.df, sum((yhat - mean(Height))^2))
+MSS
+```
+
+```{r}
+TSS = with(spruce.df, sum((Height - mean(Height))^2))
+TSS
+```
+
+## Question 3
+
+```{r}
+MSS / TSS
+```
+
+Since MSS / TSS is not close to 1 that means that a straight line is not a good fit for the data.
+
+## Question 4
+```{r}
+TSS
+RSS + MSS
+```
+
+Yes, TSS does equal RSS + MSS.
+
+# Task 5
+
+## Question 1
+
+```{r}
+summary(spruce.lm)
+```
+
+## Question 2
+
+```{r}
+coef(spruce.lm)
+```
+
+slope = 0.4814743
+
+## Question 3
+
+intercept = 9.1468390
+
+## Question 4
+
+$\hat{Height} = 9.1468390 + 0.4814743x$
+
+## Question 5
+
+```{r}
+predict(spruce.lm, data.frame(BHDiameter = c(15, 18, 20)))
+```
+
+# Task 6
+
+```{r}
+library(ggplot2)
+ggplot(spruce.df, aes(x = BHDiameter, y = Height, color = BHDiameter)) + geom_point() + geom_line() + geom_smooth(method = "lm")+ ggtitle("Height Vs Breast Height Diameter")
+```
+
+# Task 7
+
+</center>
+!["Linear Regression Line"](Linear.png){ width=70% }
+</center>
+!["Points"](Points.png){ width=70% }
+</center>
+!["Segments"](Segments.png){ width=70% }
