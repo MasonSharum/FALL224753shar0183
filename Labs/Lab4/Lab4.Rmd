@@ -1,0 +1,291 @@
+---
+title: "Lab 4: MATH 4753"
+author: "Mason Sharum"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    toc: yes
+    toc_float: yes
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Task 1
+
+WD
+
+```{r}
+getwd()
+```
+
+# Task 2
+
+```{r}
+spruce.df = read.csv("SPRUCE.csv")
+tail(spruce.df)
+```
+
+# Task 3
+
+```{r}
+library(s20x)
+
+trendscatter(Height~BHDiameter,f=0.5,data=spruce.df)
+spruce.lm = with(spruce.df, lm(Height~BHDiameter))
+height.res = residuals(spruce.lm)
+height.fit = fitted(spruce.lm)
+plot(height.fit,height.res)
+trendscatter(height.fit,height.res)
+```
+
+There is a downward facing parabolic curve that peaks in the middle of the data. Compared to the curve made from the trendscatter function, this line goes back down after reaching it's peak while the trendscatter flattens out as it starts to reach the same area, but continues to go up, not down.
+
+```{r}
+plot(spruce.lm, which = 1)
+normcheck(spruce.lm, shapiro.wilk = TRUE)
+```
+
+The P-value for the Shapiro-Wilk test is p = 0.29. Since the p-value is greater than 0.05, the null hypothesis is accepted, meaning the error is distributed normally.
+
+```{r}
+round(mean(height.res), 4)
+```
+
+The mean is 0 for the residuals.
+
+This all shows that we should not use a straight line model. The shape of the residuals vs. fitted height model is not linear, meaning we are finding signal when we should only be seeing the noise, and because of this we need to adjust our model.
+
+# Task 4
+
+```{r}
+quad.lm = lm(Height~BHDiameter + I(BHDiameter^2), data = spruce.df)
+plot(spruce.df)
+theplot = function(x){
+ quad.lm$coef[1] + quad.lm$coef[2]*x  + quad.lm$coef[3]*x^2
+} 
+curve(theplot, lwd=2, col="steelblue", add=TRUE)
+
+quad.fit = fitted(quad.lm)
+plot(quad.lm, which = 1)
+
+normcheck(quad.lm, shapiro.wilk = TRUE)
+```
+
+The P-value is 0.684. We still accept the null hypothesis. Due to the residual vs. fitted line being much straighter, this appears to be a better model for the data than the previous attempt.
+
+# Task 5
+
+```{r}
+summary(quad.lm)
+```
+
+The values are as follows:
+$\hat\beta_0 = 0.860896, \hat\beta_1 = 1.469592, \hat\beta_2 = -0.027457$
+
+```{r}
+ciReg(quad.lm)
+```
+
+Equation:
+$\hat{Height} = 0.860896 + 1.469592x - 0.027457x^2$
+
+```{r}
+predict(quad.lm, data.frame(BHDiameter = c(15,18,20)))
+predict(spruce.lm, data.frame(BHDiameter = c(15,18,20)))
+```
+
+The predictions from quad.lm are larger than the predictions for spruce.lm.
+
+```{r}
+summary(quad.lm)$r.squared
+```
+
+$R^2 = 0.7741266$
+
+```{r}
+summary(spruce.lm)$r.squared
+```
+
+$R^2 = 0.6569146$
+
+```{r}
+summary(quad.lm)$adj.r.squared
+summary(spruce.lm)$adj.r.squared
+```
+
+Since adjusted R-squared indicates how well data fits a model, and the higher the number the better the fit, it is clear that quad.lm is the better fit with a value of 0.7741266 compared to spruce.lm with a value of 0.6569146.
+
+For this model, multiple R-squared shows how well the data fits the model, without any dependence on the variables.
+
+Since it has higher values for both R-squared and ajusted R-squared, quad.lm explains the most variability in the height.
+
+```{r}
+anova(spruce.lm)
+anova(quad.lm)
+anova(spruce.lm, quad.lm)
+```
+
+quad.lm is the better model since it has a smaller RSS value than spruce.lm, which means it is a closer fit to the data.
+
+```{r}
+height.qfit = fitted(quad.lm)
+
+RSS = with(spruce.df, sum((Height-height.qfit)^2))
+RSS
+MSS = with(spruce.df, sum((height.qfit-mean(Height))^2))
+MSS
+
+TSS = with(spruce.df, sum((Height-mean(Height))^2))
+TSS
+
+MSS/TSS
+```
+
+# Task 6
+
+```{r}
+cooks20x(quad.lm)
+```
+
+Cook's distance is the measure of how much a data point would change the model if it was removed. The bigger the distance the more impact it has.
+
+In the case of quad.lm it is showing that the 24th data point is the most influential.
+
+```{r}
+quad2.lm=lm(Height~BHDiameter + I(BHDiameter^2) , data=spruce.df[-24,])
+summary(quad2.lm)
+summary(quad.lm)
+```
+
+The min, median, and max residuals are all closer to zero in quad2.lm compared to quad.lm. Both the multiple R-squared and adjusted R-squared values in quad2.lm are larger than in quad.lm.
+
+My conclusion is that the 24th data point was an outlier causing significant impact on the model and removing it, caused R-squared to increase making the model more accurate.
+
+# Task 7
+
+We have two lines that have the point $x_k$ in common
+
+\[
+  l_1:y = \beta_0 + \beta_1x
+\]
+
+\[  
+  l_2:y = \beta_0 + \delta + ( \beta_1 + \beta_2)x
+\]
+
+Next, we plug in the point $x_k$ and set the equations equal to each other, since they share this point.
+
+\[
+  y_k = \beta_0 + \beta_1x_k = \beta_0 + \delta + (\beta_1 + \beta_2)x_k
+\]
+
+Distribute $x_k$ on right hand side.
+
+\[
+  \beta_0 + \beta_1x_k = \beta_0 + \delta + \beta_1x_k + \beta_2x_k
+\]
+
+$\beta_0 and \beta_1x$ both cancel
+
+\[
+  0 = \delta + \beta_2x_k
+\]
+
+Then,
+
+\[
+  \delta = -\beta_2x_k
+\]
+
+Going back to $l_2$ for any x,
+
+\[
+  l_2: y = \beta_0 + \delta + (\beta_1 + \beta_2)x
+\]
+
+Substitute $\delta = -\beta_2x_k$,
+
+\[
+  l_2: y = \beta_0 - \beta_2x_k + (\beta_1 + \beta_2)x
+\]
+
+Distribute x,
+
+\[
+  l_2: y = \beta_0 - \beta_2x_k + \beta_1x + \beta_2x
+\]
+
+Rearrange,
+
+\[
+  l_2: y = \beta_0 + \beta_1x + \beta_2x - \beta_2x_k
+\]
+
+Factor out $\beta_2$,
+
+\[
+  l_2: y = \beta_0 + \beta_1x + \beta_2(x - x_k)
+\]
+
+This is now a formula that describes $l_2$ as an adjustment of $l_1$.
+
+We can now use an indicator function to allow our function to know where it should and should not include the adjustment.
+
+\[
+  y = \beta_0 + \beta_1x + \beta_2(x - x_k)I(x > x_k)
+\]
+
+Where I() is 1 if x > $x-k$ and 0 otherwise.
+
+```{r}
+sp2.df = within(spruce.df, X <- (BHDiameter - 18) * (BHDiameter > 18))
+sp2.df
+
+lmp = lm(Height~BHDiameter + X, data = sp2.df)
+tmp = summary(lmp)
+names(tmp)
+
+myfun = function(x, coef){
+  coef[1] +coef[2] * (x) + coef[3] * (x - 18) * (x - 18 > 0)
+}
+
+plot(spruce.df, main = "Piecewise regresssion")
+myfun(0, coef = tmp$coefficients[, "Estimate"])
+
+curve(myfun(x, coef = tmp$coefficients[, "Estimate"]), add = TRUE, lwd = 2, col = "Blue")
+abline(v = 18)
+text(18, 16, paste("R sq.=", round(tmp$r.squared, 4)))
+```
+
+# Task 8
+```{r}
+library(MATH4753F25masonsharum)
+
+MATH4753F25masonsharum::scatterhist(x = 1:10, y = 11:20)
+```
+
+The function creates a scatterplot of x vs. y and includes marginal histograms.
+
+## Package Check
+
+ERROR: Unknown command "TMPDIR=C:/Users/Mason/AppData/Local/Temp/RtmpKassdX/file686c2ddf45b". Did you mean command "install"?
+   Warning message:
+   In system2("quarto", "-V", stdout = TRUE, env = paste0("TMPDIR=",  :
+     running command '"quarto" TMPDIR=C:/Users/Mason/AppData/Local/Temp/RtmpKassdX/file686c2ddf45b -V' had status 1
+── R CMD check results ──────────────────────────────────────────── MATH4753F25masonsharum 0.1.0 ────
+Duration: 11.6s
+
+0 errors ✔ | 0 warnings ✔ | 0 notes ✔
+
+R CMD check succeeded
+
+I've looked into that error even though it doesn't technically count as an error and apparently its a sessionifo package problem but sessioninfo has no update available for it and the only thing I can find about the error is on a github bug report thread that got closed last week and marked as completed so I assume an update for sessioninfo will come out soon but for now the error is here to stay. Since its not a real error and everything runs fine I don't think its causing any problems, but I am a little upset that I can't get my package to look flawless. Have a nice week or weekend or whatever you're having when you grade this! I really like your class.
+
+
+
+
+
+
+
+
