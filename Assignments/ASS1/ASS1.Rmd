@@ -218,9 +218,77 @@ pie(nums, labels = labs, main = "Microsoft Products with Security Issues")
 ## (b)
 
 ```{r}
-
+MSFreq = c(6, 8, 22, 3, 11)
+MSLabel = c("DoS", "Info Leak", "RCE", "Spoofing", "Elevation")
+MS = rep(MSLabel, MSFreq)
+pareto(MS)
 ```
 
+Based on this diagram, I would say they should focus on fixing the Remote Code Execution problem, as that seems to be the most commonly used exploit.
+
+# Question 10
+
+```{r}
+swd = read.csv("SWDEFECTS.csv")
+head(swd)
+
+library(plotrix)
+tab = table(swd$defect)
+rtab = tab/sum(tab)
+round(rtab, 2)
+pie3D(rtab, labels = list("OK", "Defective"), main = "Pie Plot of SWD")
+```
+
+Based off of the pie chart it is easy to see that there is a high likelihood of defective software code.
+
+# Question 11
+
+
+
+# Question 12
+
+```{r}
+pipe <- read.csv("ROUGHPIPE.csv")
+avg = mean(pipe$R)
+stddev = sd(pipe$R)
+c(avg - (2*stddev), avg + (2*stddev))
+```
+
+This is the range of two standard deviations away from the mean in each direction, which according to the empirical rule will contain approximately 95% of the data since the shape of the data is normal.
+
+# Question 13
+
+## (a)
+
+```{r}
+ants = read.csv("GOBIANTS.csv")
+head(ants)
+source("getmode.R")
+mean(ants$AntSpecies)
+median(ants$AntSpecies)
+getmode(ants$AntSpecies)
+```
+The mean is the average number of species found. The median is the middle number of species found. The mode is the most common number of species found.
+
+## (b)
+
+I would use the median as the mean is much higher than the median meaning the mean is probably skewed. The mode is 
+just the most common number which could be the largest number appearing twice and hundreds of smaller numbers only appearing once. The median is always in the middle of the data, and in this case seems to be the best measure for this.
+
+## (c)
+
+
+
+# Question 14
+
+
+
+# Question 15
+
+```{r}
+library(ggplot2)
+ggplot(ddt, aes(x = RIVER, y = LENGTH)) + geom_boxplot(aes(fill = SPECIES)) + ggtitle("Mason Sharum")
+```
 
 
 
