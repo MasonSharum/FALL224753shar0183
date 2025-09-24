@@ -1,0 +1,245 @@
+---
+title: "Assignment 1"
+author: "Mason Sharum"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: yes
+    toc_float: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+I completed 15/15 questions in this assignment.
+
+# Question 1
+
+Below is the table of grading weights for the course.
+
+| Group            | Amount | Total Weight |
+| ---------------  | -----: | -----------: |
+| Assignments      | 4      | 15%          |
+| Laboratories     | 16     | 10%          |
+| Projects         | 2      | 10%          |
+| In Class Quizzes | TBD    | 10%          |
+| Chapter Quizzes  | TBD    | 5%           |
+| Mid-Term Exam    | 1      | 20%          |
+| Final Exam       | 1      | 30%          |
+
+The grading scale is as follows: A (100-90) B(89-80) C(79-60) D(59-50) F(<50), and there will be no curves.
+
+
+# Question 2
+
+```{r}
+ddt <- read.csv("DDT.csv")
+head(ddt)
+
+ddt$MILE = factor(ddt$MILE)
+```
+
+## (a)
+
+```{r}
+with(ddt, coplot(LENGTH ~ WEIGHT | RIVER * SPECIES, ddt, col = MILE))
+```
+
+## (b)
+
+The length and weight of catfish found in the FCM, LCM, and SCM rivers increase together in a positive correlation.
+
+## (c)
+
+Line A is a function call that creates a factor object of the MILE variable, meaning it makes a vector of the measurements from MILE after sorting them into categories.
+
+## (d)
+
+Line B is a function call that returns the number of unique values in the previously made vector. For instance if the vector was [1, 1, 2, 3, 3], it would return 3 since there are three unique numbers.
+
+## (e)
+
+The top six plots are empty because there are no fish that are either LMBASS or SMBUFFALO that were caught in the FCM, LCM, or SCM rivers.
+
+## (f)
+
+```{r}
+cat = subset(ddt, RIVER == "FCM" & SPECIES == "CCATFISH",)
+mean(cat$DDT)
+```
+
+# Question 3
+
+## (a)
+
+Length of the maximum span (feet) is a quantitative variable.
+
+## (b)
+
+Number of vehicle lanes is a quantitative variable.
+
+## (c)
+
+TOll bridge (yes or no) is a qualitative variable.
+
+## (d)
+
+Average daily traffic is a quantitative variable.
+
+## (e)
+
+Condition of deck (good, fair, poor) is a qualitative variable.
+
+## (f)
+
+Bypass or detour length (miles) is a quantitative variable.
+
+## (g)
+
+Route type (interstate, U.S., state, county, or city) is a qualitative variable.
+
+# Question 4
+
+## (a)
+
+The four random sampling designs are as follows: simple random sampling, stratified random sampling, cluster sampling, and systematic sampling.
+
+## (b)
+
+Simple random sampling happens when n experimental units are selected from the population in such a way that every different sample of size n has an equal chance of selection.
+
+Stratified random sampling happens when the population is separated into different strata based off of certain characteristics of the experimental units. These strata are then randomly sampled from.
+
+Cluster sampling happens when a group(or cluster) is selected from within the population and then data is taken about every unit in the cluster.
+
+Systematic sampling happens when every kth experimental unit is selected from a list of all experimental units.
+
+# Question 5
+
+```{r}
+mtbe <- read.csv("MTBE.csv")
+head(mtbe)
+
+ind = sample(1:223, 5, replace = FALSE)
+mtbe[ind,]
+```
+
+## (a)
+
+### (i)
+
+```{r}
+mtbeo = na.omit(mtbe)
+```
+
+### (ii)
+
+```{r}
+depth = mtbeo[mtbeo$Aquifier == "Bedrock",]$Depth
+sd(depth)
+```
+
+# Question 6
+
+```{r}
+eq <- read.csv("EARTHQUAKE.csv")
+head(eq)
+
+ind = sample(1:2929, 30, replace = FALSE)
+eq[ind,]
+```
+
+## (a)
+
+### (i)
+
+```{r}
+plot(ts(eq$MAG))
+
+median(eq$MAGNITUDE)
+```
+
+# Question 7
+
+## (a)
+
+The data was collected with a stratified sample.
+
+## (b)
+
+The population is all of the fish in the Tennessee River.
+
+## (c)
+
+The qualitative variables are location and species. Location was divided into river and mile.
+
+# Question 8
+
+## (a)
+
+A bar graph is used to describe the data.
+
+## (b)
+
+The variable measured for each of the 106 robot designs was type of robotic limbs.
+
+## (c)
+
+The current most used design of robot is legs only.
+
+## (d)
+
+```{r}
+limb_freq = c(15, 8, 63, 20)
+limb_labels = c("None", "Both", "Legs", "Wheels")
+rel_freq = as.data.frame(matrix(data = limb_freq/sum(limb_freq), nrow = 4, ncol = 1), row.names = limb_labels)
+rel_freq
+```
+
+## (e)
+
+```{r}
+source("pareto.r")
+l = rep(limb_labels, limb_freq)
+pareto(l)
+```
+
+# Question 9
+
+## (a)
+
+```{r}
+nums = c(32, 6, 12)
+labs = c("Windows", "Explorer", "Office")
+pie(nums, labels = labs, main = "Microsoft Products with Security Issues")
+```
+
+## (b)
+
+```{r}
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
