@@ -243,7 +243,149 @@ Based off of the pie chart it is easy to see that there is a high likelihood of 
 
 # Question 11
 
+## (a)
 
+| Class | Class Interval    | Data Tabulation                                                     | Frequency | Relative Frequency |
+| :---: | :-------------:   | :-----------------------------------------------------------------  | :-------: | :----------------: |
+| 1     | [8.0000,8.2900]   | 8.05                                                                | 1         | 0.0333             |
+| 2     | (8.2900,8.5800]   | -                                                                   | 0         | 0.0000             |
+| 3     | (8.5800,8.8700]   | 8.72,8.72,8.80                                                      | 3         | 0.1000             |
+| 4     | (8.8700,9.1600]   | -                                                                   | 0         | 0.0000             |
+| 5     | (9.1600,9.4500]   | -                                                                   | 0         | 0.0000             |
+| 6     | (9.4500,9.7400]   | 9.55,9.70,9.73                                                      | 3         | 0.1000             |
+| 7     | (9.7400,10.0200]  | 9.80,9.80,9.84,9.84,9.87,9.87,9.95,9.97,9.98,9.98,10.00,10.01,10.02 | 13        | 0.4333             |
+| 8     | (10.0200,10.3100] | 10.03,10.05,10.05,10.12,10.15,10.15,10.26,10.26,10.29               | 9         | 0.3000             |
+| 9     | (10.3100,10.6000] | 10.55                                                               | 1         | 0.0333             |
+| Total | -                 | -                                                                   | 30        | 1                  |
+
+```{r}
+volt <- read.csv("VOLTAGE.csv")
+head(volt)
+old = volt[volt$LOCATION == "OLD",]
+new = volt[volt$LOCATION == "NEW",]
+vto = old$VOLTAGE
+vto
+max(vto)
+min(vto)
+lept = min(vto) - 0.05
+rept = max(vto) + 0.05
+rnge = rept - lept
+inc = rnge/9
+inc
+cl = seq(lept, rept,by = inc)
+cl
+cuts = cut(vto,breaks = cl)
+old.tab = table(cuts)
+barplot(old.tab / sum(old.tab), space = 0, main = "Relative Frequency(OLD)", las = 2)
+```
+
+## (b)
+
+```{r}
+volt <- read.csv("VOLTAGE.csv")
+head(volt)
+old = volt[volt$LOCATION == "OLD",]
+new = volt[volt$LOCATION == "NEW",]
+stem(x = old$VOLTAGE)
+```
+
+Both graphs are equally informative about where most of the voltage readings lie. The stem and leaf display gives you exact numbers for how many are in each section though so that is a bit more descriptive but both are able to tell you which area has the most data points.
+
+## (c)
+
+```{r}
+vtn = new$VOLTAGE
+vtn
+max(vtn)
+min(vtn)
+lept = min(vtn) - 0.05
+rept = max(vtn) + 0.05
+rnge = rept - lept
+inc = rnge/9
+inc
+cl = seq(lept, rept,by = inc)
+cl
+cuts = cut(vtn,breaks = cl)
+new.tab = table(cuts)
+barplot(new.tab/sum(new.tab), space = 0, main = "Frequency Histogram(NEW)", las = 2)
+```
+
+## (d)
+
+The new location has a lot more voltages that fall below the cutoff point of 9.2, while the old location has a lot less. This shows that the new location is not yet as good as the previous location and that they should probably not yet move over production.
+
+## (e)
+
+### OLD
+
+```{r}
+source("getmode.R")
+mean(old$VOLTAGE)
+median(old$VOLTAGE)
+getmode(old$VOLTAGE)
+```
+
+The average reading is about 9.8 and the middle value is 9.975, while the most common value is 9.98. I would say that the mean is the best indicator of central tendency in this case, because the distribution is close to normal so the mean will be centralized.
+
+### NEW
+
+```{r}
+mean(new$VOLTAGE)
+median(new$VOLTAGE)
+getmode(new$VOLTAGE)
+```
+
+The average reading is about 9.4 and the middle value is 9.455, while the most common value is 8.82. I would say that the mean is the best indicator of central tendency in this case, because the distribution is close to normal so the mean will be centralized.
+
+## (f)
+
+```{r}
+(10.5 - mean(old$VOLTAGE))/sd(old$VOLTAGE)
+```
+
+## (g)
+
+```{r}
+(10.5 - mean(new$VOLTAGE))/sd(new$VOLTAGE)
+```
+
+## (h)
+
+The reading of 10.5 is more likely to occur at the old location since it has a lower z-score at the old location meaning it is closer to the mean and therefore more likely to occur.
+
+## (i)
+
+```{r}
+boxplot(old$VOLTAGE, horizontal = T)
+```
+
+There appear to be outliers in the old location.
+
+## (j)
+
+```{r}
+old[abs((old$VOLTAGE-mean(old$VOLTAGE))/sd(old$VOLTAGE)) > 3,]
+```
+
+## (k)
+
+```{r}
+boxplot(new$VOLTAGE, horizontal = T)
+```
+
+There does not seem to be any outliers based off of this boxplot.
+
+## (l)
+
+```{r}
+new[abs((new$VOLTAGE-mean(new$VOLTAGE))/sd(new$VOLTAGE)) > 3,]
+```
+
+## (m)
+
+```{r}
+boxplot(old$VOLTAGE, new$VOLTAGE, names = c("Old", "New"))
+```
 
 # Question 12
 
@@ -263,7 +405,7 @@ This is the range of two standard deviations away from the mean in each directio
 ```{r}
 ants = read.csv("GOBIANTS.csv")
 head(ants)
-source("getmode.R")
+
 mean(ants$AntSpecies)
 median(ants$AntSpecies)
 getmode(ants$AntSpecies)
@@ -277,11 +419,64 @@ just the most common number which could be the largest number appearing twice an
 
 ## (c)
 
+```{r}
+step = ants[ants$Site < 6,]
+mean(step$PlantCov)
+median(step$PlantCov)
+getmode(step$PlantCov)
+```
 
+## (d)
+
+```{r}
+des = ants[ants$Site >= 6,]
+mean(des$PlantCov)
+median(des$PlantCov)
+getmode(des$PlantCov)
+```
+
+## (e)
+
+Yes it appears to be different between the two regions, as the Dry Steppe Sites are around 40 and the Gobi Desert sites are lower down around 28.
 
 # Question 14
 
+## (a)
 
+```{r}
+gal <- read.csv("GALAXY2.csv")
+head(gal)
+with(gal, hist(VELOCITY, breaks = 10))
+```
+
+## (b)
+
+Yes, there is evidence to support the double cluster theory since there are two separate peaks within the graph.
+
+## (c)
+
+```{r}
+A = gal$V[gal$V <= 21000];
+B = gal$V[gal$V > 21000];
+```
+
+Galaxy A
+
+```{r}
+mean(A)
+sd(A)
+```
+
+Galaxy B
+
+```{r}
+mean(B)
+sd(B)
+```
+
+## (d)
+
+If a galaxy velocity of 20,000 km/s is observed it would likely belong to cluster A, since that value is much closer to galaxy A's mean of 19462.24 than to galaxy B's mean of 22838.47. 
 
 # Question 15
 
